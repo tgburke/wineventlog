@@ -41,8 +41,7 @@ func getLogs() {
 		go func(config *common.Config, wg *sync.WaitGroup) {
 			defer wg.Done()
 			for { // loop until ctrl-c
-				// example of log open/close on each iteration keeping track of the EventLogState
-				//   so we don't lose the Bookmark of the last event received
+				// example of log open/close on each iteration keeping track of the EventLogState on re-open
 				log, err := eventlog.New(config)
 				if err != nil {
 					fmt.Println(err)
@@ -60,7 +59,6 @@ func getLogs() {
 					return
 
 				} else if len(records) == 0 {
-					fmt.Printf("channel[%s] sleeping\n", log.Name())
 					time.Sleep(10 * time.Second)
 
 				} else {
@@ -69,8 +67,8 @@ func getLogs() {
 						fmt.Printf("event[%v]\n", record.ToEvent())
 					}
 					fmt.Printf("channel[%s] count[%d]\n\n", log.Name(), len(records))
+					// keep track of the Bookmark of the last event
 					states[log.Name()] = records[len(records)-1].Offset
-					fmt.Printf("state %v\n", states[log.Name()])
 				}
 				log.Close()
 			}
