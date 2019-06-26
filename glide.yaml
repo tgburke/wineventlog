@@ -1,0 +1,6 @@
+package: github.com/tgburke/wineventlog
+import:
+- package: github.com/elastic/beats
+  version: ^7.1.1
+  subpackages:
+  - winlogbeat/sys/wineventlog
